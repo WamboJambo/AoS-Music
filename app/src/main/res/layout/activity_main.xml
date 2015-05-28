@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:background="#ccc">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Entry 1"
+            android:id="@+id/textView3"
+            android:textColor="#000" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Entry 2"
+            android:id="@+id/textView2"
+            android:textColor="#000" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Entry 3"
+            android:id="@+id/textView"
+            android:textColor="#000" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Entry 4"
+            android:id="@+id/textView4"
+            android:textColor="#000" />
+    </TableRow>
+
+    <TableRow>
+
+        <Button android:text="Toast!"
+            android:textColor="#000"
+            android:clickable="true"
+            android:enabled="true"
+            android:background="#00ccff"
+            android:id="@+id/toastButton">
+
+        </Button>
+
+    </TableRow>
+</TableLayout>

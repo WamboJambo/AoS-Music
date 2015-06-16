@@ -3,9 +3,14 @@
     <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>
     <string name="app_name">Test Program</string>
+    <string name="confirm">Logout</string>
+    <string name="decline">Back</string>
     <string name="hello_world">Hello world!</string>
     <string name="login">Login</string>
+    <string name="login_error">Error logging in. Please check that you have a solid internet connection and that your account has been created and verified.</string>
+    <string name="login_fail">Invalid username or password</string>
     <string name="login_text">Please login below to access further content.</string>
+    <string name="logout">Are you sure that you would like to logout?</string>
     <string name="onoff">Dark Theme</string>
     <string name="pass">Password</string>
     <string name="remember">Remember me</string>

@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:baselineAligned="false"
     android:paddingStart="20dp"
-    android:paddingEnd="20dp"
-    android:background="#ccc">
+    android:paddingEnd="20dp">
 
     <TableRow
         android:layout_width="match_parent"
@@ -16,8 +15,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Entry 1"
-            android:id="@+id/textView3"
-            android:textColor="#000" />
+            android:id="@+id/textView3" />
 
     </TableRow>
 
@@ -30,8 +28,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Entry 2"
-            android:id="@+id/textView2"
-            android:textColor="#000" />
+            android:id="@+id/textView2" />
     </TableRow>
 
     <TableRow
@@ -43,8 +40,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Entry 3"
-            android:id="@+id/textView"
-            android:textColor="#000" />
+            android:id="@+id/textView" />
     </TableRow>
 
     <TableRow
@@ -56,8 +52,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Entry 4"
-            android:id="@+id/textView4"
-            android:textColor="#000" />
+            android:id="@+id/textView4" />
     </TableRow>
 
     <TableRow>

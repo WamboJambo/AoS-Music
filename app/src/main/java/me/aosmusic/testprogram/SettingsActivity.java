@@ -1,9 +1,11 @@
 package me.aosmusic.testprogram;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import me.aosmusic.constants.Globals;
 
@@ -13,7 +15,7 @@ import me.aosmusic.constants.Globals;
 public class SettingsActivity extends Activity {
 
     Bundle savedInstanceState;
-    Switch darkTheme;
+    ToggleButton darkTheme;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -22,7 +24,7 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
         this.savedInstanceState = savedInstanceState;
 
-        darkTheme = (Switch)findViewById(R.id.darkTheme);
+        darkTheme = (ToggleButton)findViewById(R.id.darkTheme);
         darkTheme.setChecked(Globals.isDark());
 
     }
@@ -32,7 +34,7 @@ public class SettingsActivity extends Activity {
     }
 
     public void onToggleClicked(View view) {
-        boolean on = ((Switch) view).isChecked();
+        boolean on = ((ToggleButton) view).isChecked();
 
         if (on) {
             Globals.setThemeNum(Globals.THEME_DARK);
@@ -41,6 +43,9 @@ public class SettingsActivity extends Activity {
         }
 
         setContentView(R.layout.activity_settings);
-        recreate(savedInstanceState);
+        Intent intent = getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        startActivity(intent);
     }
 }

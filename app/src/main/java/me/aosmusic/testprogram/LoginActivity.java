@@ -3,6 +3,7 @@ package me.aosmusic.testprogram;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
@@ -21,6 +22,7 @@ public class LoginActivity extends Activity {
     public EditText userText;
     public EditText passText;
     private static LoginActivity loginPage;
+    private AsyncTask<String, String, String> asyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +36,7 @@ public class LoginActivity extends Activity {
         loginButton = (Button)findViewById(R.id.loginButton);
         userText = (EditText)findViewById(R.id.userText);
         passText = (EditText)findViewById(R.id.passText);
-        String username = userText.getText().toString();
-        String password = passText.getText().toString();
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new HTTPLogin().execute(userText.getText().toString(), passText.getText().toString());
-            }
-        });
+        makeLoginButton();
     }
 
     /**
@@ -57,10 +52,14 @@ public class LoginActivity extends Activity {
         switch (status) {
             case 0:
                 Toast.makeText(LoginActivity.this, "Incorrect username or password", Toast.LENGTH_SHORT).show();
+                asyncTask.cancel(true);
+                makeLoginButton();
                 break;
             case 1:
                 Toast.makeText(LoginActivity.this,
-                        "You have not verified your account.  Please check your registered email's inbox and spam for a verification message.", Toast.LENGTH_SHORT).show();
+                        "You have not verified your account.  Please check your registered email's inbox and spam for a verification message.", Toast.LENGTH_LONG).show();
+                asyncTask.cancel(true);
+                makeLoginButton();
                 break;
             case 2:
                 Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
@@ -70,5 +69,17 @@ public class LoginActivity extends Activity {
         }
         // Necessary (and recommended against?) to call UI functions outside of main thread
         Looper.loop();
+    }
+
+    public void makeLoginButton() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userText.getText().toString() == "" || passText.getText().toString() == "")
+                    Toast.makeText(LoginActivity.this, "Please enter a valid username and password", Toast.LENGTH_SHORT).show();
+                else
+                    asyncTask = new HTTPLogin().execute(userText.getText().toString(), passText.getText().toString());
+            }
+        });
     }
 }

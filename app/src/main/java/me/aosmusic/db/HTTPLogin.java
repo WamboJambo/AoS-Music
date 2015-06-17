@@ -16,15 +16,16 @@ import me.aosmusic.testprogram.LoginActivity;
 /**
  * Created by corsijn on 6/16/2015.
  */
-public class HTTPLogin extends AsyncTask<String, String, Void> {
+public class HTTPLogin extends AsyncTask<String, String, String> {
+
+    final String TAG = "HTTPLogin";
+    private LoginActivity loginActivity;
 
     @Override
-    protected Void doInBackground(String...params) {
+    protected String doInBackground(String...params) {
         HttpURLConnection conn;
         OutputStreamWriter request;
         URL url;
-
-        final String TAG = "HTTPLogin";
 
         String parameters = "user=" + params[0] + "&pass=" + params[1];
 
@@ -42,17 +43,26 @@ public class HTTPLogin extends AsyncTask<String, String, Void> {
             String line = "";
             InputStreamReader returnParams = new InputStreamReader(conn.getInputStream());
             BufferedReader reader = new BufferedReader(returnParams);
-            int response = Character.getNumericValue(reader.readLine().charAt(0));
-            LoginActivity loginPage = LoginActivity.getLoginActivity();
-            // Necessary (and recommended against?) to call UI functions outside of main thread
-            Looper.prepare();
-            loginPage.login(response);
+            StringBuilder sb = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            String response = sb.toString();
             returnParams.close();
             reader.close();
-            return null;
+            return response;
         } catch (IOException e) {
-            Log.d(TAG, e.getMessage());
-            return null;
+            return e.getMessage();
+        }
+    }
+
+    @Override
+    protected void onPostExecute(String status) {
+        if (Character.isDigit(status.charAt(0))) {
+            loginActivity = LoginActivity.getLoginActivity();
+            loginActivity.login(Character.getNumericValue(status.charAt(0)));
+        } else {
+            Log.e(TAG, status);
         }
     }
 }

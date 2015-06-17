@@ -20,7 +20,6 @@ import me.aosmusic.constants.Globals;
 public class MainActivity extends Activity {
 
     public ActionBar actionBar;
-    public Button toastButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +28,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        toastButton = (Button) findViewById(R.id.toastButton);
-        toastButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, R.string.toast, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -66,6 +56,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent homeIntent = new Intent(MainActivity.this, LoginActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(homeIntent);
                     }
                 })
@@ -77,8 +68,8 @@ public class MainActivity extends Activity {
                 startActivity(settingsIntent);
                 break;
             case R.id.action_logout:
-
                 Intent logoutIntent = new Intent(MainActivity.this, LoginActivity.class);
+                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(logoutIntent);
                 break;
             default:

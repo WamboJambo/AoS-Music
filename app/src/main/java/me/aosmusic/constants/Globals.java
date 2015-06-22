@@ -7,7 +7,7 @@ import android.app.Application;
  */
 public class Globals extends Application {
 
-    public static final int THEME_LIGHT = android.R.style.Theme_Holo_Light;
+    public static final int THEME_LIGHT = android.R.style.Theme_Holo_Light_DarkActionBar;
     public static final int THEME_DARK = android.R.style.Theme_Holo;
 
     public static int currentTheme = THEME_LIGHT;

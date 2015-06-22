@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,21 +15,28 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import me.aosmusic.constants.Globals;
+import me.aosmusic.db.HTTPRequest;
 
 /**
  * Created by corsijn on 5/27/2015.
  */
 public class MainActivity extends Activity {
 
+    public final String TAG = "MainActivity";
     public ActionBar actionBar;
+    private AsyncTask<String, Void, String> asyncTask;
+    private static MainActivity mainPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mainPage = this;
         setTheme(Globals.getThemeNum());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        asyncTask = new HTTPRequest().execute("SELECT * FROM music");
     }
 
     @Override
@@ -77,5 +86,37 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static MainActivity getMainActivity() {
+        return mainPage;
+    }
+
+    public void buildMainPage(String queryReturn) {
+        String[][] music = parseQueryReturn(queryReturn);
+
+        for (int i = 0; i < music.length; i++) {
+            for (int j = 0; j < music[i].length; j++) {
+                Log.d(TAG, music[i][j]);
+            }
+        }
+    }
+
+    private String[][] parseQueryReturn(String toParse) {
+        String[] splitString;
+
+        splitString = toParse.split("x|x");
+
+        String[][] music = new String[splitString.length][5];
+
+        for (int i = 0; i < splitString.length / 5; i++) {
+            music[i][0] = splitString[(5 * i)];
+            music[i][1] = splitString[(5 * i) + 1];
+            music[i][2] = splitString[(5 * i) + 2];
+            music[i][3] = splitString[(5 * i) + 3];
+            music[i][4] = splitString[(5 * i) + 4];
+        }
+
+        return music;
     }
 }

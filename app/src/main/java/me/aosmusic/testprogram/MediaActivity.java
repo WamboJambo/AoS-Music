@@ -18,12 +18,12 @@ public class MediaActivity  {
         }
     }
 
-    public void play(Context c) {
+    public void play(Context c, int index) {
         if (mPlayer != null) {
             mPlayer.start();
         }
         else {
-
+            mPlayer.selectTrack(index);
             mPlayer.start();
 
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -40,5 +40,10 @@ public class MediaActivity  {
             mPlayer.release();
             mPlayer = null;
         }
+    }
+
+    public void stream(Context c, int index) {
+
+
     }
 }

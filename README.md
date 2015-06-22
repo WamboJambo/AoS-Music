@@ -14,7 +14,7 @@ c) Ability to download music from AoSMusic
 To-Do: 
 
 - ~~Create login page~~
-- Generate list of song titles/artists
+- ~~Generate list of song titles/artists~~
 - Implement music player
 - Add working download button
 - Add working stream button

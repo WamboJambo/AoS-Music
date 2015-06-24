@@ -1,29 +1,20 @@
 package me.aosmusic.testprogram;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ActionMenuView;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.EnumMap;
 
 import me.aosmusic.constants.Globals;
+import me.aosmusic.db.HTTPDownload;
 import me.aosmusic.db.HTTPRequest;
 
 /**
@@ -31,12 +22,10 @@ import me.aosmusic.db.HTTPRequest;
  */
 public class MainActivity extends Activity {
 
-    public static enum Data {
-      id, title, artist, album, url
-    };
-
     public final String TAG = "MainActivity";
-    private AsyncTask<String, Void, String> asyncTask;
+    public static String[][] music;
+    private AsyncTask<String, Void, String> selectAsyncTask;
+    private AsyncTask<String, Void, String> dlAsyncTask;
     private static MainActivity mainPage;
 
     @Override
@@ -47,17 +36,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        asyncTask = new HTTPRequest().execute("SELECT * FROM music");
-
-        /**FragmentManager fm = getFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
-
-        if (fragment == null) {
-            fragment = new MainFragment();
-            fm.beginTransaction()
-                    .add(R.id.fragmentContainer, fragment)
-                    .commit();
-        }*/
+        selectAsyncTask = new HTTPRequest().execute("SELECT * FROM music");
     }
 
     @Override
@@ -85,6 +64,12 @@ public class MainActivity extends Activity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if (StreamFragment.getMediaPlayer() != null)
+                            StreamFragment.getMediaPlayer().stop();
+                        StreamFragment.destroyMP();
+                        if (DownloadFragment.getMediaPlayer() != null)
+                            DownloadFragment.getMediaPlayer().stop();
+                        DownloadFragment.destroyMP();
                         Intent homeIntent = new Intent(MainActivity.this, LoginActivity.class);
                         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(homeIntent);
@@ -98,10 +83,24 @@ public class MainActivity extends Activity {
                 startActivity(settingsIntent);
                 break;
             case R.id.action_logout:
+                if (StreamFragment.getMediaPlayer() != null)
+                    StreamFragment.getMediaPlayer().stop();
+                StreamFragment.destroyMP();
+                if (DownloadFragment.getMediaPlayer() != null)
+                    DownloadFragment.getMediaPlayer().stop();
+                DownloadFragment.destroyMP();
                 Intent logoutIntent = new Intent(MainActivity.this, LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(logoutIntent);
                 break;
+            case R.id.action_downloaded:
+                Intent downloadedIntent = new Intent(MainActivity.this, DownloadActivity.class);
+                downloadedIntent.putExtra("URL", getMusic()[0][Globals.URL]);
+                downloadedIntent.putExtra("Title", getMusic()[0][Globals.TITLE]);
+                downloadedIntent.putExtra("Artist", getMusic()[0][Globals.ARTIST]);
+                downloadedIntent.putExtra("Album", getMusic()[0][Globals.ALBUM]);
+                downloadedIntent.putExtra("ID", getMusic()[0][Globals.ID]);
+                startActivity(downloadedIntent);
             default:
                 break;
         }
@@ -114,22 +113,11 @@ public class MainActivity extends Activity {
     }
 
     public void buildMainPage(String queryReturn) {
-        String[][] music = parseQueryReturn(queryReturn);
+        String[][] songs = parseQueryReturn(queryReturn);
 
-        for (int i = 0; i < music.length; i++) {
-            createRow(music[i]);
+        for (int i = 0; i < songs.length; i++) {
+            createRow(songs[i]);
         }
-
-        /**FragmentManager fm = getFragmentManager();
-        MainFragment fragment = (MainFragment) fm.findFragmentById(R.id.fragmentContainer);
-        if (fragment == null) {
-            fragment = new MainFragment();
-        fm.beginTransaction()
-                .add(R.id.fragmentContainer, fragment)
-                .commit();
-        }
-
-        fragment.buildMenu(music);*/
 
     }
 
@@ -158,9 +146,24 @@ public class MainActivity extends Activity {
         tr.setOnClickListener(new View.OnClickListener() {
                                   @Override
                                   public void onClick(View v) {
-                                      Intent i = new Intent(MainActivity.this, MediaActivity.class);
-                                      i.putExtra("URL", rowInfo[Globals.URL]);
-                                      startActivity(i);
+                                      AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                                      builder.setTitle("Stream or Download?");
+                                      builder.setMessage("Choose to either stream this track or download for future listening.");
+                                      builder.setPositiveButton("Stream", new DialogInterface.OnClickListener() {
+                                          @Override
+                                          public void onClick(DialogInterface dialog, int which) {
+                                              playStream(rowInfo);
+                                          }
+                                      });
+                                      builder.setNeutralButton("Download", new DialogInterface.OnClickListener() {
+                                          @Override
+                                          public void onClick(DialogInterface dialog, int which) {
+                                              download(rowInfo);
+                                          }
+                                      });
+                                      builder.setNegativeButton("Cancel", null);
+                                      builder.show();
                                   }
                               });
 
@@ -172,7 +175,7 @@ public class MainActivity extends Activity {
 
         splitString = toParse.split("x\\|x");
 
-        String[][] music = new String[(splitString.length / 5)][5];
+        music = new String[(splitString.length / 5)][5];
 
         for (int i = 0; i < splitString.length / 5; i++) {
             music[i][Globals.ID] = splitString[(5 * i)];
@@ -182,6 +185,32 @@ public class MainActivity extends Activity {
             music[i][Globals.URL] = splitString[(5 * i) + 4];
         }
 
+        return music;
+    }
+
+    public void playStream(String[] rowInfo) {
+        Intent i = new Intent(MainActivity.this, StreamActivity.class);
+        i.putExtra("ID", rowInfo[Globals.ID]);
+        i.putExtra("URL", rowInfo[Globals.URL]);
+        i.putExtra("Title", rowInfo[Globals.TITLE]);
+        i.putExtra("Artist", rowInfo[Globals.ARTIST]);
+        i.putExtra("Album", rowInfo[Globals.ALBUM]);
+        startActivity(i);
+    }
+
+    public void download(String[] rowInfo) {
+        dlAsyncTask = new HTTPDownload().execute(rowInfo[Globals.URL], rowInfo[Globals.ID]);
+
+        Intent i = new Intent(MainActivity.this, DownloadActivity.class);
+        i.putExtra("ID", rowInfo[Globals.ID]);
+        i.putExtra("URL", rowInfo[Globals.URL]);
+        i.putExtra("Title", rowInfo[Globals.TITLE]);
+        i.putExtra("Artist", rowInfo[Globals.ARTIST]);
+        i.putExtra("Album", rowInfo[Globals.ALBUM]);
+        startActivity(i);
+    }
+
+    public static String[][] getMusic() {
         return music;
     }
 }

@@ -3,6 +3,7 @@
     package="me.aosmusic.testprogram" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -29,7 +30,7 @@
             android:parentActivityName=".MainActivity" >
         </activity>
         <activity
-            android:name=".MediaActivity"
+            android:name=".StreamActivity"
             android:label="Music"
             android:parentActivityName=".MainActivity" >
             <intent-filter>
@@ -37,6 +38,11 @@
                 <data android:mimeType="audio/*" />
                 <data android:mimeType="application/ogg" />
             </intent-filter>
+        </activity>
+        <activity android:name=".DownloadActivity"
+            android:label="Music"
+            android:parentActivityName=".MainActivity" >
+
         </activity>
 
     </application>

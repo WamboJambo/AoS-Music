@@ -45,7 +45,7 @@ public class HTTPLogin extends AsyncTask<String, String, String> {
             BufferedReader reader = new BufferedReader(returnParams);
             StringBuilder sb = new StringBuilder();
             while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line);
             }
             String response = sb.toString();
             returnParams.close();

@@ -3,6 +3,8 @@ package me.aosmusic.testprogram;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,8 +13,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ActionMenuView;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.EnumMap;
 
 import me.aosmusic.constants.Globals;
 import me.aosmusic.db.HTTPRequest;
@@ -22,8 +31,11 @@ import me.aosmusic.db.HTTPRequest;
  */
 public class MainActivity extends Activity {
 
+    public static enum Data {
+      id, title, artist, album, url
+    };
+
     public final String TAG = "MainActivity";
-    public ActionBar actionBar;
     private AsyncTask<String, Void, String> asyncTask;
     private static MainActivity mainPage;
 
@@ -33,10 +45,19 @@ public class MainActivity extends Activity {
         setTheme(Globals.getThemeNum());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         asyncTask = new HTTPRequest().execute("SELECT * FROM music");
+
+        /**FragmentManager fm = getFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
+
+        if (fragment == null) {
+            fragment = new MainFragment();
+            fm.beginTransaction()
+                    .add(R.id.fragmentContainer, fragment)
+                    .commit();
+        }*/
     }
 
     @Override
@@ -96,25 +117,69 @@ public class MainActivity extends Activity {
         String[][] music = parseQueryReturn(queryReturn);
 
         for (int i = 0; i < music.length; i++) {
-            for (int j = 0; j < music[i].length; j++) {
-                Log.d(TAG, music[i][j]);
-            }
+            createRow(music[i]);
         }
+
+        /**FragmentManager fm = getFragmentManager();
+        MainFragment fragment = (MainFragment) fm.findFragmentById(R.id.fragmentContainer);
+        if (fragment == null) {
+            fragment = new MainFragment();
+        fm.beginTransaction()
+                .add(R.id.fragmentContainer, fragment)
+                .commit();
+        }
+
+        fragment.buildMenu(music);*/
+
+    }
+
+    private void createRow(final String[] rowInfo) {
+        TableRow tr = new TableRow(this);
+        tr.setPadding(10,20,10,20);
+
+        //Layout params for each row
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+
+        //Layout params to even out artist/album titles
+        //LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, )
+
+        tr.setLayoutParams(lp);
+
+        TextView tv = new TextView(this);
+        tv.setLayoutParams(lp);
+        tv.setText(rowInfo[Globals.TITLE] + "\n" + rowInfo[Globals.ARTIST] + " - " + rowInfo[Globals.ALBUM]);
+
+        tr.setBackgroundResource(R.drawable.row_border);
+
+        tr.addView(tv);
+
+        TableLayout tl = (TableLayout)this.findViewById(R.id.fragmentContainer);
+
+        tr.setOnClickListener(new View.OnClickListener() {
+                                  @Override
+                                  public void onClick(View v) {
+                                      Intent i = new Intent(MainActivity.this, MediaActivity.class);
+                                      i.putExtra("URL", rowInfo[Globals.URL]);
+                                      startActivity(i);
+                                  }
+                              });
+
+        tl.addView(tr);
     }
 
     private String[][] parseQueryReturn(String toParse) {
         String[] splitString;
 
-        splitString = toParse.split("x|x");
+        splitString = toParse.split("x\\|x");
 
-        String[][] music = new String[splitString.length][5];
+        String[][] music = new String[(splitString.length / 5)][5];
 
         for (int i = 0; i < splitString.length / 5; i++) {
-            music[i][0] = splitString[(5 * i)];
-            music[i][1] = splitString[(5 * i) + 1];
-            music[i][2] = splitString[(5 * i) + 2];
-            music[i][3] = splitString[(5 * i) + 3];
-            music[i][4] = splitString[(5 * i) + 4];
+            music[i][Globals.ID] = splitString[(5 * i)];
+            music[i][Globals.TITLE] = splitString[(5 * i) + 1];
+            music[i][Globals.ARTIST] = splitString[(5 * i) + 2];
+            music[i][Globals.ALBUM] = splitString[(5 * i) + 3];
+            music[i][Globals.URL] = splitString[(5 * i) + 4];
         }
 
         return music;

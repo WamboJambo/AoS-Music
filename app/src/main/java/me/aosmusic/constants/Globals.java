@@ -7,6 +7,14 @@ import android.app.Application;
  */
 public class Globals extends Application {
 
+    // It pains me to do this, but I tried an enumerated map and evidently they don't allow for multi-dimensional
+    // storage (I haven't taken Data Structures, I didn't know about that)
+    public static final int ID = 0;
+    public static final int TITLE = 1;
+    public static final int ARTIST = 2;
+    public static final int ALBUM = 3;
+    public static final int URL = 4;
+
     public static final int THEME_LIGHT = android.R.style.Theme_Holo_Light_DarkActionBar;
     public static final int THEME_DARK = android.R.style.Theme_Holo;
 

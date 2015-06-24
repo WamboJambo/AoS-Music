@@ -1,44 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp" >
 
-    <TableRow>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
 
-        <TextView
-            android:text="Song Title, Song Artist"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_margin="2dp"
-            android:textAlignment="textStart"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:paddingTop="12dp"
-            />
+    <TableLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp" >
 
-        <Button android:text="Stream"
-            android:padding="10dp"
-            android:layout_margin="2dp"
-            android:textColor="#000"
-            android:clickable="true"
-            android:enabled="true"
-            android:background="#00ccff"
-            android:id="@+id/streamButton">
-
-        </Button>
-
-        <Button android:text="Download"
-            android:padding="10dp"
-            android:layout_margin="2dp"
-            android:textColor="#000"
-            android:clickable="true"
-            android:enabled="true"
-            android:background="#00ccff"
-            android:id="@+id/dlButton">
-
-        </Button>
-
-    </TableRow>
-</TableLayout>
+    </TableLayout>
+</ScrollView>

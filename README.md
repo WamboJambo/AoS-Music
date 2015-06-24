@@ -15,6 +15,10 @@ To-Do:
 
 - ~~Create login page~~
 - ~~Generate list of song titles/artists~~
-- Implement music player
+- ~~Implement music player~~
 - Add working download button
-- Add working stream button
+- ~~Add working stream button~~
+- Fix next & previous buttons
+- Fix scrollbar to follow current track progress and to change to point on slide
+- Add search functionality
+- Organize songs somehow (title, artist, etc.)
